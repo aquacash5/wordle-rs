@@ -2,37 +2,33 @@ use std::io::Write;
 
 use anyhow::Result;
 use console::{style, Key, Term};
-use itertools::Itertools;
 
 include!(concat!(env!("OUT_DIR"), "/dictionary.rs"));
 
 fn mark_guess(answer: &String, guess: &String) -> String {
     let mut temp_answer = answer.clone();
     let mut marked: Vec<String> = guess.chars().map(|_| String::from(" ")).collect();
-    // set exact answers
+
+    // mark correct answers
     for (i, g) in guess.char_indices() {
         if answer.chars().nth(i).unwrap_or_default() == g {
             marked[i] = style(g).black().on_green().to_string();
             temp_answer.replace_range(i..i + 1, " ");
         }
     }
+
+    // mark wrong and misplaced
     for (i, g) in guess.char_indices() {
-        if marked[i] == " " && temp_answer.contains(g) {
-            marked[i] = style(g).black().on_yellow().to_string();
-            temp_answer = temp_answer.replacen(g, " ", 1);
+        if marked[i] == " " {
+            marked[i] = if temp_answer.contains(g) {
+                temp_answer = temp_answer.replacen(g, " ", 1);
+                style(g).black().on_yellow().to_string()
+            } else {
+                style(g).white().on_black().to_string()
+            };
         }
     }
-    marked
-        .into_iter()
-        .zip(guess.chars())
-        .map(|(s, c)| {
-            if s == " " {
-                style(c).white().on_black().to_string()
-            } else {
-                s
-            }
-        })
-        .join("")
+    marked.join("")
 }
 
 fn main() -> Result<()> {
@@ -41,10 +37,12 @@ fn main() -> Result<()> {
     let mut answer: String;
     let mut exit = false;
 
+    // get answer word
     term.clear_screen()?;
     term.write("Enter 5 letter secret answer: ".as_bytes())?;
     answer = term.read_secure_line()?.to_uppercase();
 
+    // user entered bad answer word
     while answer.len() != 5 && !DICTIONARY.contains(&answer) {
         term.clear_screen()?;
         if answer.len() != 5 {
@@ -56,6 +54,7 @@ fn main() -> Result<()> {
         answer = term.read_secure_line()?.to_uppercase();
     }
 
+    // play the game
     term.clear_screen()?;
     term.write_line("Enter 5 letter guesses:")?;
     while !exit {
