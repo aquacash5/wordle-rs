@@ -13,7 +13,7 @@ fn mark_guess(answer: &String, guess: &String) -> String {
     for (i, g) in guess.char_indices() {
         if answer.chars().nth(i).unwrap_or_default() == g {
             marked[i] = style(g).black().on_green().to_string();
-            temp_answer.replace_range(i..i + 1, " ");
+            temp_answer.replace_range(i..=i, " ");
         }
     }
 
