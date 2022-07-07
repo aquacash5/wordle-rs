@@ -14,3 +14,10 @@ phf = { version = "0.10", features = ["macros"] }
 anyhow = "1.0.56"
 const-gen = "0.2.1"
 reqwest = { version = "0.11", features = ["blocking"] }
+
+[profile.release]
+opt-level = 'z'   # Optimize for size.
+lto = true        # Enable Link Time Optimization
+codegen-units = 1 # Reduce number of codegen units to increase optimizations.
+panic = "abort"   # Abort on panic
+strip = "symbols" # Strip symbols from binary*
