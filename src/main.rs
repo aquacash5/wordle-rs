@@ -43,7 +43,7 @@ fn main() -> Result<()> {
     answer = term.read_secure_line()?.to_uppercase();
 
     // user entered bad answer word
-    while answer.len() != 5 && !DICTIONARY.contains(&answer) {
+    while answer.len() != 5 || !DICTIONARY.contains(&answer) {
         term.clear_screen()?;
         if answer.len() != 5 {
             term.write_line(&style("Answer must be 5 letters long").red().to_string())?;
