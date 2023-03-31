@@ -5,8 +5,8 @@ use console::{style, Key, Term};
 
 include!(concat!(env!("OUT_DIR"), "/dictionary.rs"));
 
-fn mark_guess(answer: &String, guess: &String) -> String {
-    let mut temp_answer = answer.clone();
+fn mark_guess(answer: &str, guess: &str) -> String {
+    let mut temp_answer = answer.to_string();
     let mut marked: Vec<String> = guess.chars().map(|_| String::from(" ")).collect();
 
     // mark correct answers
@@ -39,7 +39,7 @@ fn main() -> Result<()> {
 
     // get answer word
     term.clear_screen()?;
-    term.write("Enter 5 letter secret answer: ".as_bytes())?;
+    term.write_all("Enter 5 letter secret answer: ".as_bytes())?;
     answer = term.read_secure_line()?.to_uppercase();
 
     // user entered bad answer word
@@ -50,7 +50,7 @@ fn main() -> Result<()> {
         } else {
             term.write_line(&style("Answer is not a valid word").red().to_string())?;
         }
-        term.write("Enter 5 letter secret answer: ".as_bytes())?;
+        term.write_all("Enter 5 letter secret answer: ".as_bytes())?;
         answer = term.read_secure_line()?.to_uppercase();
     }
 
@@ -64,7 +64,7 @@ fn main() -> Result<()> {
                 if c.is_ascii_alphabetic() {
                     let c = c.to_ascii_uppercase();
                     guess.push(c);
-                    term.write(c.to_string().as_bytes())?;
+                    term.write_all(c.to_string().as_bytes())?;
                 }
             }
             Key::Enter => {
@@ -74,7 +74,7 @@ fn main() -> Result<()> {
                     exit = answer == guess;
                     guess.clear();
                 }
-                term.write(&guess.as_bytes())?;
+                term.write_all(guess.as_bytes())?;
             }
             Key::Backspace => {
                 guess.pop();

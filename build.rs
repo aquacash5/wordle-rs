@@ -14,7 +14,7 @@ fn main() -> Result<()> {
             .filter(|s| s.len() == 5)
             .map(|s| s.to_uppercase()),
     );
-    fs::write(&dest_path, const_declaration!(DICTIONARY = dictionary))?;
+    fs::write(dest_path, const_declaration!(DICTIONARY = dictionary))?;
     println!("cargo:rerun-if-changed=build.rs");
     Ok(())
 }
